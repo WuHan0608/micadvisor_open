@@ -87,11 +87,19 @@ func getContainerId(cadvisorData string) string {
 	return containerId
 }
 
-func getEndPoint(DockerData string) string {
+func getEndPoint(DockerData string, Names []string) string {
 	//get endpoint from env first
-	endPoint := getBetween(DockerData, `"EndPoint=`, `",`)
-	if endPoint != "" {
-		return endPoint
+	/*
+		endPoint := getBetween(DockerData, `"EndPoint=`, `",`)
+		if endPoint != "" {
+			return endPoint
+		}
+	*/
+	endPoint := getBetween(DockerData, `"Name": "/`, `",`)
+	for _, name := range Names {
+		if endPoint == name {
+			return endPoint
+		}
 	}
 	filepath := getBetween(DockerData, `"HostsPath":"`, `",`)
 	buf := make(map[int]string, 6)

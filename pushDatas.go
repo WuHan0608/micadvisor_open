@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/WuHan0608/micadvisor_open/g"
 )
 
 var (
@@ -31,7 +33,7 @@ func pushData() {
 
 		DockerData, _ := getDockerData(containerId) //get container inspect
 
-		endpoint := getEndPoint(DockerData) //there is the hosts file path in the inpect of container
+		endpoint := getEndPoint(DockerData, g.Config().Match) //there is the hosts file path in the inpect of container
 
 		getCpuNum(DockerData) //we need to give the container CPU ENV
 

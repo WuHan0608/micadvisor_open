@@ -1,16 +1,23 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
 	"time"
+
+	"github.com/Wuhan0608/micadvisor_open/g"
 )
 
 var Interval time.Duration //检测时间间隔
 
 func main() {
+	cfg := flag.String("c", "cfg.json", "configuration file")
+	flag.Parse()
+	g.ParseConfig(*cfg)
+
 	tmp := os.Getenv("Interval")
 	Interval = 60 * time.Second
 	tmp1, err := strconv.ParseInt(tmp, 10, 64)
