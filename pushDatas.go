@@ -33,9 +33,6 @@ func pushData() {
 
 		DockerData, _ := getDockerData(containerId) //get container inspect
 
-		for _, name := range g.Config().Match {
-			fmt.Println("name=", name)
-		}
 		if endpoint := getEndPoint(DockerData, g.Config().Match); endpoint != "" { //there is the hosts file path in the inpect of container
 
 			getCpuNum(DockerData) //we need to give the container CPU ENV
