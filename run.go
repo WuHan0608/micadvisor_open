@@ -7,8 +7,6 @@ import (
 	"os/exec"
 	"strconv"
 	"time"
-
-	"github.com/Wuhan0608/micadvisor_open/g"
 )
 
 var Interval time.Duration //检测时间间隔
@@ -16,7 +14,6 @@ var Interval time.Duration //检测时间间隔
 func main() {
 	cfg := flag.String("c", "cfg.json", "configuration file")
 	flag.Parse()
-	g.ParseConfig(*cfg)
 
 	tmp := os.Getenv("Interval")
 	Interval = 60 * time.Second
@@ -26,7 +23,7 @@ func main() {
 		Interval = time.Duration(tmp1) * time.Second
 	}
 
-	cmd := exec.Command("/home/work/uploadCadviosrData/cadvisor")
+	cmd := exec.Command("/home/work/uploadCadviosrData/cadvisor", "--port", "18080")
 	if err = cmd.Start(); err != nil {
 		fmt.Println(err)
 		return
@@ -38,7 +35,7 @@ func main() {
 		t := time.NewTicker(Interval)
 		for {
 			<-t.C
-			cmd = exec.Command("/home/work/uploadCadviosrData/uploadCadvisorData")
+			cmd = exec.Command("/home/work/uploadCadviosrData/uploadCadvisorData", "-c", *cfg)
 			if err := cmd.Start(); err != nil {
 				fmt.Println(err)
 				return

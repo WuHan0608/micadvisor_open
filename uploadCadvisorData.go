@@ -1,10 +1,19 @@
 package main
 
-import "os"
+import (
+	"flag"
+	"os"
+
+	"github.com/WuHan0608/micadvisor_open/g"
+)
 
 var CadvisorPort = "18080"
 
 func main() {
+	cfg := flag.String("c", "cfg.json", "configuration file")
+	flag.Parse()
+
+	g.ParseConfig(*cfg)
 
 	LogRun("sys start")
 

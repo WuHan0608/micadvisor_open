@@ -33,34 +33,38 @@ func pushData() {
 
 		DockerData, _ := getDockerData(containerId) //get container inspect
 
-		endpoint := getEndPoint(DockerData, g.Config().Match) //there is the hosts file path in the inpect of container
-
-		getCpuNum(DockerData) //we need to give the container CPU ENV
-
-		tag := getTag() //recode some other message for a container
-
-		ausge, busge := getUsageData(cadvDataForOneContainer[k]) //get 2 usage because some metric recoding Incremental metric
-
-		cpuuage1 := getBetween(ausge, `"cpu":`, `,"diskio":`)
-		cpuuage2 := getBetween(busge, `"cpu":`, `,"diskio":`)
-		if err := pushCPU(cpuuage1, cpuuage2, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about CPU
-			LogErr(err, "pushCPU err in pushData")
+		for _, name := range g.Config().Match {
+			fmt.Println("name=", name)
 		}
+		if endpoint := getEndPoint(DockerData, g.Config().Match); endpoint != "" { //there is the hosts file path in the inpect of container
 
-		diskiouage := getBetween(ausge, `"diskio":`, `,"memory":`)
-		if err := pushDiskIo(diskiouage, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about DISKIO
-			LogErr(err, "pushDiskIo err in pushData")
-		}
+			getCpuNum(DockerData) //we need to give the container CPU ENV
 
-		memoryuage := getBetween(ausge, `"memory":`, `,"network":`)
-		if err := pushMem(memLimit, memoryuage, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about Memery
-			LogErr(err, "pushMem err in pushData")
-		}
+			tag := getTag() //recode some other message for a container
 
-		networkuage1 := getBetween(ausge, `"network":`, `,"task_stats":`)
-		networkuage2 := getBetween(busge, `"network":`, `,"task_stats":`)
-		if err := pushNet(networkuage1, networkuage2, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about net
-			LogErr(err, "pushNet err in pushData")
+			ausge, busge := getUsageData(cadvDataForOneContainer[k]) //get 2 usage because some metric recoding Incremental metric
+
+			cpuuage1 := getBetween(ausge, `"cpu":`, `,"diskio":`)
+			cpuuage2 := getBetween(busge, `"cpu":`, `,"diskio":`)
+			if err := pushCPU(cpuuage1, cpuuage2, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about CPU
+				LogErr(err, "pushCPU err in pushData")
+			}
+
+			diskiouage := getBetween(ausge, `"diskio":`, `,"memory":`)
+			if err := pushDiskIo(diskiouage, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about DISKIO
+				LogErr(err, "pushDiskIo err in pushData")
+			}
+
+			memoryuage := getBetween(ausge, `"memory":`, `,"network":`)
+			if err := pushMem(memLimit, memoryuage, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about Memery
+				LogErr(err, "pushMem err in pushData")
+			}
+
+			networkuage1 := getBetween(ausge, `"network":`, `,"task_stats":`)
+			networkuage2 := getBetween(busge, `"network":`, `,"task_stats":`)
+			if err := pushNet(networkuage1, networkuage2, timestamp, tag, containerId, endpoint); err != nil { //get cadvisor data about net
+				LogErr(err, "pushNet err in pushData")
+			}
 		}
 	}
 }

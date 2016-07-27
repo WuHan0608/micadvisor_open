@@ -50,7 +50,7 @@ func getCadvisorData() (string, error) {
 		err  error
 		body []byte
 	)
-	url := "http://localhost:" + CadvisorPort + "/api/v1.2/docker"
+	url := "http://localhost:" + CadvisorPort + "/api/v1.3/docker"
 	if resp, err = http.Get(url); err != nil {
 		LogErr(err, "Get err in getCadvisorData")
 		return "", err
@@ -95,12 +95,16 @@ func getEndPoint(DockerData string, Names []string) string {
 			return endPoint
 		}
 	*/
-	endPoint := getBetween(DockerData, `"Name": "/`, `",`)
+	endPoint := getBetween(DockerData, `"Name":"/`, `","RestartCount":`)
 	for _, name := range Names {
 		if endPoint == name {
 			return endPoint
 		}
 	}
+
+	return ""
+
+	// The remaining codes are unnecessary
 	filepath := getBetween(DockerData, `"HostsPath":"`, `",`)
 	buf := make(map[int]string, 6)
 	inputFile, inputError := os.Open(filepath)
